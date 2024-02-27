@@ -43,6 +43,7 @@ about:
   description: |
     This package provides the core functionality for pydantic validation and serialization.
   license: MIT
+  license_family: MIT
   license_file: LICENSE
 
 extra:
