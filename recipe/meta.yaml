@@ -1,4 +1,4 @@
-{% set version = "2.16.3" %}
+{% set version = "2.14.6" %}
 
 package:
   name: pydantic-core
@@ -6,24 +6,17 @@ package:
 
 source:
   url: https://pypi.io/packages/source/p/pydantic-core/pydantic_core-{{ version }}.tar.gz
-  sha256: 1cac689f80a3abab2d3c0048b29eea5751114054f032a941a32de4c852c59cad
+  sha256: 1fd0c1d395372843fba13a51c28e3bb9d59bd7aebfeb17358ffaaa1e4dbbe948
 
 build:
   script:
-    # PyPy has weird sysconfigdata name
-    - rm -f $PREFIX/lib/pypy$PY_VER/_sysconfigdata.py  # [build_platform != target_platform and target_platform == "linux-ppc64le"]
-    - {{ PYTHON }} -m pip install . -vv
-    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
+    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
 
 requirements:
   build:
-    - python                                 # [build_platform != target_platform]
-    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - maturin >=1,<2                         # [build_platform != target_platform]
     - {{ compiler("c") }}
     - {{ compiler("rust") }}
-    - cargo-bundle-licenses
   host:
     - pip
     - python
@@ -45,7 +38,10 @@ test:
 about:
   home: https://github.com/pydantic/pydantic-core
   dev_url: https://github.com/pydantic/pydantic-core
+  doc_url: https://docs.pydantic.dev
   summary: Core validation logic for pydantic written in rust
+  description: |
+    This package provides the core functionality for pydantic validation and serialization.
   license: MIT
   license_file: LICENSE
 
