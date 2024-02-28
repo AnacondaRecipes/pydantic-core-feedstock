@@ -18,7 +18,6 @@ build:
 requirements:
   build:
     - {{ compiler("c") }}
-    - {{ compiler("cxx")}}  # [osx and x86]
     - {{ compiler("rust") }}
   host:
     - pip
