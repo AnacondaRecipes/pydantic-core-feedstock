@@ -24,13 +24,12 @@ requirements:
   build:
     - {{ compiler("c") }}
     - {{ compiler("rust") }}
+    - cargo-bundle-licenses
   host:
     - pip
     - python
     - maturin >=1,<2
     - typing-extensions  >=4.6.0,!=4.7.0
-    - wheel
-    - cargo-bundle-licenses
   run:
     - python
     - typing-extensions >=4.6.0,!=4.7.0
