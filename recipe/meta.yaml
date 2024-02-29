@@ -14,6 +14,7 @@ build:
     - RUSTC_LOG=rustc_codegen_ssa::back::link=info  # [osx and x86_64]
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
   number: 0
   missing_dso_whitelist:  # [s390x]
     - $RPATH/ld64.so.1    # [s390x]
@@ -50,7 +51,7 @@ about:
     This package provides the core functionality for pydantic validation and serialization.
   license: MIT
   license_family: MIT
-  license_file: LICENSE
+  license_file: THIRDPARTY.yml
 
 extra:
   recipe-maintainers:
