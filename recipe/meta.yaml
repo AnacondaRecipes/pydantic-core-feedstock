@@ -10,8 +10,9 @@ source:
 
 build:
   script_env:
+    # on osx-64, we get an error from install_name_tool: changing install names or rpaths can't be redone for: <path> (for architecture x86_64) because larger updated load commands do not fit (the program must be relinked, and you may need to use -headerpad or -headerpad_max_install_names)
+    # After some investigation, rustc doesn't seem to read our LDFLAGS
     - RUSTFLAGS=-C link-args=-headerpad_max_install_names  # [osx and x86_64]
-    - RUSTC_LOG=rustc_codegen_ssa::back::link=info  # [osx and x86_64]
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
