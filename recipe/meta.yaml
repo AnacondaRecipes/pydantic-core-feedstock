@@ -9,6 +9,9 @@ source:
   sha256: 1fd0c1d395372843fba13a51c28e3bb9d59bd7aebfeb17358ffaaa1e4dbbe948
 
 build:
+  script_env:
+    - RUSTFLAGS=-C link-args=-headerpad_max_install_names  # [osx and x86_64]
+    - RUSTC_LOG=rustc_codegen_ssa::back::link=info  # [osx and x86_64]
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
