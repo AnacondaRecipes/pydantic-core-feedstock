@@ -18,7 +18,7 @@ build:
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
   number: 0
   missing_dso_whitelist:  # [s390x]
-    - $RPATH/ld64.so.1    # [s390x] 
+    - $RPATH/ld64.so.1    # [s390x]
 
 requirements:
   build:
