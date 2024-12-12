@@ -1,4 +1,4 @@
-{% set version = "2.21.0" %}
+{% set version = "2.27.1" %}
 
 package:
   name: pydantic-core
@@ -6,7 +6,7 @@ package:
 
 source:
   url: https://pypi.io/packages/source/p/pydantic-core/pydantic_core-{{ version }}.tar.gz
-  sha256: 79c747f9916e5b6cb588dfd994d9ac15a93e43eb07467d9e6f24d892c176bbf5
+  sha256: 62a763352879b84aa31058fc931884055fd75089cccbd9d58bb6afd01141b235
 
 build:
   script_env:
@@ -16,7 +16,7 @@ build:
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  number: 1
+  number: 0
   missing_dso_whitelist:  # [s390x]
     - $RPATH/ld64.so.1    # [s390x]
 
