@@ -16,7 +16,7 @@ build:
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  number: 0
+  number: 1
   missing_dso_whitelist:  # [s390x]
     - $RPATH/ld64.so.1    # [s390x]
 
