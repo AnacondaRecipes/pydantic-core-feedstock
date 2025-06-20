@@ -1,12 +1,12 @@
-{% set version = "2.27.1" %}
+{% set version = "2.35.1" %}
 
 package:
   name: pydantic-core
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/p/pydantic-core/pydantic_core-{{ version }}.tar.gz
-  sha256: 62a763352879b84aa31058fc931884055fd75089cccbd9d58bb6afd01141b235
+  url: https://pypi.org/packages/source/p/pydantic-core/pydantic_core-{{ version }}.tar.gz
+  sha256: 54d93282d8307dcd504a645326b92414364ff75c0f3909bdf00016c82f66c96c
 
 build:
   script_env:
@@ -18,7 +18,8 @@ build:
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
   number: 0
   missing_dso_whitelist:  # [s390x]
-    - $RPATH/ld64.so.1    # [s390x]
+    - $RPATH/ld64.so.1  # [s390x]
+  skip: true  # [py<39]
 
 requirements:
   build:
@@ -28,18 +29,19 @@ requirements:
   host:
     - pip
     - python
-    - maturin >=1,<2
     - typing-extensions >=4.6.0,!=4.7.0
+    - maturin >=1,<2
   run:
     - python
     - typing-extensions >=4.6.0,!=4.7.0
+    - typing_extensions >=4.13.0
 
 test:
   imports:
     - pydantic_core
   commands:
     - pip check
-    - python -c "from pydantic_core import PydanticUndefinedType"
+    - "python -c \"from pydantic_core import PydanticUndefinedType\""
   requires:
     - pip
 
