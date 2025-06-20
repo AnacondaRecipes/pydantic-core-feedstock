@@ -1,4 +1,5 @@
-{% set version = "2.35.1" %}
+# Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
+{% set version = "2.33.2" %}
 
 package:
   name: pydantic-core
@@ -6,7 +7,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/p/pydantic-core/pydantic_core-{{ version }}.tar.gz
-  sha256: 54d93282d8307dcd504a645326b92414364ff75c0f3909bdf00016c82f66c96c
+  sha256: 7cb8bc3605c29176e1b105350d2e6474142d7c1bd1d9327c4a9bdb46bf827acc
 
 build:
   script_env:
@@ -34,14 +35,13 @@ requirements:
   run:
     - python
     - typing-extensions >=4.6.0,!=4.7.0
-    - typing_extensions >=4.13.0
 
 test:
   imports:
     - pydantic_core
   commands:
     - pip check
-    - "python -c \"from pydantic_core import PydanticUndefinedType\""
+    - python -c "from pydantic_core import PydanticUndefinedType"
   requires:
     - pip
 
