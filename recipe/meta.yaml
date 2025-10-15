@@ -29,7 +29,7 @@ requirements:
     - maturin >=1.9.4,<2
   run:
     - python
-    - typing_extensions >=4.14.1
+    - typing-extensions >=4.14.1
 
 #E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
 {% set ignored_tests = [
