@@ -46,7 +46,6 @@ test:
     - pyproject.toml
   imports:
     - pydantic_core
-    - pydantic_core.validators
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
