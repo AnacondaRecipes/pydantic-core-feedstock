@@ -58,6 +58,7 @@ test:
     - dirty-equals
     - pytest-benchmark
     - pytest-timeout
+    - pytest-mock
 
 about:
   home: https://github.com/pydantic/pydantic-core
