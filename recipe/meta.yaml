@@ -1,14 +1,14 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.39.0" %}
+{% set version = "2.41.4" %}
 
 package:
-  name: {{ name }}
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: b890a3990bd55ba5dab17fb6ae80eb25bb33e2f5b462da386562e7a168dd02de
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_') }}-{{ version }}.tar.gz
+  sha256: 70e47929a9d4a1905a67e4b687d5946026390568a8e952b92824118063cee4d5
 
 build:
   script:
@@ -26,19 +26,24 @@ requirements:
   host:
     - pip
     - python
-    - maturin >=1.9,<2
+    - maturin >=1.9.4,<2
   run:
     - python
-    - typing-extensions >=4.14.1
+    - typing_extensions >=4.14.1
 
 test:
+  source_files:
+    - tests
+    - pyproject.toml
   imports:
     - pydantic_core
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
+    - pytest -v
   requires:
     - pip
+    - pytest
 
 about:
   home: https://github.com/pydantic/pydantic-core
