@@ -31,19 +31,34 @@ requirements:
     - python
     - typing_extensions >=4.14.1
 
+#E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
+{% set ignored_tests = [
+  "--ignore=tests/test_docstrings.py",
+  "--ignore=tests/test_hypothesis.py",
+  "--ignore=tests/validators/test_allow_partial.py",
+  "--ignore=tests/validators/test_frozenset.py",
+  "--ignore=tests/validators/test_list.py",
+  "--ignore=tests/validators/test_set.py"
+]%}
 test:
   source_files:
     - tests
     - pyproject.toml
   imports:
     - pydantic_core
+    - pydantic_core.validators
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    - pytest -v
+    - pytest -v {{ ignored_tests | join(" ")}}
   requires:
     - pip
     - pytest
+    - hypothesis
+    - typing-inspection
+    - dirty-equals
+    - pytest-benchmark
+    - pytest-timeout
 
 about:
   home: https://github.com/pydantic/pydantic-core
