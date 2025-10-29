@@ -1,6 +1,14 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
 {% set version = "2.41.4" %}
+{% set ignored_tests = [
+  "--ignore=tests/test_docstrings.py",
+  "--ignore=tests/test_hypothesis.py",
+  "--ignore=tests/validators/test_allow_partial.py",
+  "--ignore=tests/validators/test_frozenset.py",
+  "--ignore=tests/validators/test_list.py",
+  "--ignore=tests/validators/test_set.py"
+] %}
 
 package:
   name: {{ name|lower }}
@@ -14,7 +22,7 @@ build:
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  number: 0
+  number: 1
   skip: true  # [py<39]
 
 requirements:
@@ -32,14 +40,6 @@ requirements:
     - typing-extensions >=4.14.1
 
 #E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
-{% set ignored_tests = [
-  "--ignore=tests/test_docstrings.py",
-  "--ignore=tests/test_hypothesis.py",
-  "--ignore=tests/validators/test_allow_partial.py",
-  "--ignore=tests/validators/test_frozenset.py",
-  "--ignore=tests/validators/test_list.py",
-  "--ignore=tests/validators/test_set.py"
-]%}
 test:
   source_files:
     - tests
