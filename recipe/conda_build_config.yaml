@@ -1,2 +1,4 @@
-MACOSX_DEPLOYMENT_TARGET:  # [osx and x86]
-  - 10.12  # [osx and x86]
+c_compiler_version:
+  - 11.2.0                 # [linux]
+cxx_compiler_version:
+  - 11.2.0                 # [linux]
