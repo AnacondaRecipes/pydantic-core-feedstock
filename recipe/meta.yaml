@@ -1,6 +1,6 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.41.5" %}
+{% set version = "2.42.0" %}
 
 package:
   name: {{ name|lower }}
@@ -8,13 +8,13 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: 08daa51ea16ad373ffd5e7606252cc32f07bc72b28284b6bc9c6df804816476e
+  sha256: 34068adadf673c872f01265fa17ec00073e99d7f53f6d499bdfae652f330b3d2
 
 build:
+  number: 0
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  number: 1
   skip: true  # [py<39]
 
 requirements:
@@ -26,7 +26,7 @@ requirements:
   host:
     - pip
     - python
-    - maturin >=1.9.4,<2
+    - maturin >=1.10,<2
   run:
     - python
     - typing-extensions >=4.14.1
