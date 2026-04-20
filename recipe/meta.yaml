@@ -32,6 +32,8 @@ requirements:
     - typing-extensions >=4.14.1
 
 #E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
+# Instead of skipping those (since no pytest-run-parallel), we'll downgrade that single
+# error back to warning status (warning-as-error).
 {% set ignored_tests = [
   "--ignore=tests/test_docstrings.py",
   "--ignore=tests/test_hypothesis.py",
@@ -49,7 +51,8 @@ test:
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    - pytest -v {{ ignored_tests | join(" ")}}
+    # downgrade back to warning severity (error as warning) instead of skipping ignored_tests (comment above).
+    - pytest -vv -W default::pytest.PytestUnknownMarkWarning
   requires:
     - pip
     - pytest
@@ -59,6 +62,7 @@ test:
     - pytest-benchmark
     - pytest-timeout
     - pytest-mock
+    - inline-snapshot
 
 about:
   home: https://github.com/pydantic
