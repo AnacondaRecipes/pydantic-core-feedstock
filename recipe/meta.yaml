@@ -15,7 +15,7 @@ build:
   script:
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  skip: true  # [py<310]
+  skip: true  # [py<39]
 
 requirements:
   build:
