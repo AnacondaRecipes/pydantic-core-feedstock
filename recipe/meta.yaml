@@ -66,16 +66,15 @@ test:
 
 about:
   home: https://github.com/pydantic
-  dev_url: https://github.com/pydantic/pydantic/tree/main/pydantic-core
-  doc_url: https://docs.pydantic.dev
   summary: Core validation logic for pydantic written in rust
-  description: |
-    This package provides the core functionality for pydantic validation and serialization.
+  description: This package provides the core functionality for pydantic validation and serialization.
   license: MIT
   license_family: MIT
   license_file:
     - LICENSE
     - THIRDPARTY.yml
+  dev_url: https://github.com/pydantic/pydantic/tree/main/pydantic-core
+  doc_url: https://pydantic.dev/docs
 
 extra:
   recipe-maintainers:
