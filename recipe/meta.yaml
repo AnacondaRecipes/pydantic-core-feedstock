@@ -61,8 +61,8 @@ test:
     - pytest-mock
 
 about:
-  home: https://github.com/pydantic/pydantic-core
-  dev_url: https://github.com/pydantic/pydantic-core
+  home: https://github.com/pydantic
+  dev_url: https://github.com/pydantic/pydantic/tree/main/pydantic-core
   doc_url: https://docs.pydantic.dev
   summary: Core validation logic for pydantic written in rust
   description: |
