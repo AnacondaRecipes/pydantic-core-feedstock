@@ -1,6 +1,6 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.46.2" %}
+{% set version = "2.46.4" %}
 
 package:
   name: {{ name|lower }}
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: 37bb079f9ee3f1a519392b73fda2a96379b31f2013c6b467fe693e7f2987f596
+  sha256: 62f875393d7f270851f20523dd2e29f082bcc82292d66db2b64ea71f64b6e1c1
 
 build:
   number: 0
@@ -65,17 +65,18 @@ test:
     - inline-snapshot
 
 about:
-  home: https://github.com/pydantic
-  summary: Core validation logic for pydantic written in rust
-  description: This package provides the core functionality for pydantic validation and serialization.
+  home: https://github.com/pydantic/pydantic
   license: MIT
   license_family: MIT
   license_file:
     - LICENSE
     - THIRDPARTY.yml
-  dev_url: https://github.com/pydantic/pydantic/tree/main/pydantic-core
+  summary: Core validation logic for pydantic written in rust
+  description: |
+    This package provides the core functionality for pydantic validation and serialization.
+  dev_url: https://github.com/pydantic/pydantic
   doc_url: https://pydantic.dev/docs
-
+  
 extra:
   recipe-maintainers:
     - xhochy
