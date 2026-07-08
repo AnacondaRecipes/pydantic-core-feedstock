@@ -1,6 +1,6 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.46.4" %}
+{% set version = "2.47.0" %}
 
 package:
   name: {{ name|lower }}
@@ -8,14 +8,18 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: 62f875393d7f270851f20523dd2e29f082bcc82292d66db2b64ea71f64b6e1c1
+  sha256: 422c1797a7864b2a9a996435aba92fe571fb80190f67a31edbc1ac040c7b51fe
 
 build:
   number: 0
   script:
+    # pydantic-core is not abi3; if this env var leaks in (e.g. from other PyO3 builds on win-arm64),
+    # pyo3 enables Py_LIMITED_API and the Rust build fails.
+    - unset PYO3_USE_ABI3_FORWARD_COMPATIBILITY  # [not win]
+    - set PYO3_USE_ABI3_FORWARD_COMPATIBILITY=   # [win]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  skip: true  # [py<39]
+  skip: true  # [py<310]
 
 requirements:
   build:
@@ -26,7 +30,7 @@ requirements:
   host:
     - pip
     - python
-    - maturin >=1.10,<2
+    - maturin >=1.13.3,<2
   run:
     - python
     - typing-extensions >=4.14.1
@@ -34,14 +38,6 @@ requirements:
 #E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
 # Instead of skipping those (since no pytest-run-parallel), we'll downgrade that single
 # error back to warning status (warning-as-error).
-{% set ignored_tests = [
-  "--ignore=tests/test_docstrings.py",
-  "--ignore=tests/test_hypothesis.py",
-  "--ignore=tests/validators/test_allow_partial.py",
-  "--ignore=tests/validators/test_frozenset.py",
-  "--ignore=tests/validators/test_list.py",
-  "--ignore=tests/validators/test_set.py"
-] %}
 test:
   source_files:
     - tests
@@ -52,7 +48,7 @@ test:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
     # downgrade back to warning severity (error as warning) instead of skipping ignored_tests (comment above).
-    - pytest -vv -W default::pytest.PytestUnknownMarkWarning
+    - pytest -vv --ignore=tests/test_docstrings.py -W default::pytest.PytestUnknownMarkWarning
   requires:
     - pip
     - pytest
