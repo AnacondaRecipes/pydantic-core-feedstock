@@ -13,6 +13,10 @@ source:
 build:
   number: 0
   script:
+    # pydantic-core is not abi3; if this env var leaks in (e.g. from other PyO3 builds on win-arm64),
+    # pyo3 enables Py_LIMITED_API and the Rust build fails.
+    - unset PYO3_USE_ABI3_FORWARD_COMPATIBILITY  # [not win]
+    - set PYO3_USE_ABI3_FORWARD_COMPATIBILITY=   # [win]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
   skip: true  # [py<310]
