@@ -1,6 +1,6 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.46.4" %}
+{% set version = "2.46.5" %}
 
 package:
   name: {{ name|lower }}
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: 62f875393d7f270851f20523dd2e29f082bcc82292d66db2b64ea71f64b6e1c1
+  sha256: 10416c15b8839ecc4ef4d0885da76da6fd0f67333a0eb8aff6d93c4b8f2910fc
 
 build:
   number: 0
