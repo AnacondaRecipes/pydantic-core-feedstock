@@ -1,6 +1,6 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.46.5" %}
+{% set version = "2.50.1" %}
 
 package:
   name: {{ name|lower }}
@@ -8,14 +8,18 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: 10416c15b8839ecc4ef4d0885da76da6fd0f67333a0eb8aff6d93c4b8f2910fc
+  sha256: e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09
 
 build:
   number: 0
   script:
+    # Not abi3. A leaked PYO3_USE_ABI3_FORWARD_COMPATIBILITY (win-arm64 workers)
+    # makes pyo3 set Py_LIMITED_API and the Rust build fails.
+    - unset PYO3_USE_ABI3_FORWARD_COMPATIBILITY  # [not win]
+    - set PYO3_USE_ABI3_FORWARD_COMPATIBILITY=   # [win]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
-  skip: true  # [py<39]
+  skip: true  # [py<310]
 
 requirements:
   build:
@@ -26,22 +30,13 @@ requirements:
   host:
     - pip
     - python
-    - maturin >=1.10,<2
+    - maturin >=1.15.0,<2  # pyproject.toml [build-system].requires
   run:
     - python
-    - typing-extensions >=4.14.1
+    - typing-extensions >=4.16.0  # pyproject.toml dependencies
 
 #E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
-# Instead of skipping those (since no pytest-run-parallel), we'll downgrade that single
-# error back to warning status (warning-as-error).
-{% set ignored_tests = [
-  "--ignore=tests/test_docstrings.py",
-  "--ignore=tests/test_hypothesis.py",
-  "--ignore=tests/validators/test_allow_partial.py",
-  "--ignore=tests/validators/test_frozenset.py",
-  "--ignore=tests/validators/test_list.py",
-  "--ignore=tests/validators/test_set.py"
-] %}
+# No pytest-run-parallel here, so downgrade that mark to a warning instead of skipping.
 test:
   source_files:
     - tests
@@ -51,7 +46,7 @@ test:
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    # downgrade back to warning severity (error as warning) instead of skipping ignored_tests (comment above).
+    # downgrade unknown thread_unsafe marks to warnings (see comment above).
     # newer pytest (9.x) also flags class-scoped fixtures defined as instance methods; downgrade that too.
     # test_allow_partial.py::test_set_frozenset[set_schema] hits an inline-snapshot internal AssertionError
     # unrelated to pydantic-core behavior; skip it.
@@ -60,7 +55,7 @@ test:
     - pip
     - pytest
     - hypothesis
-    - typing-inspection
+    - typing-inspection >=0.4.1
     - dirty-equals
     - pytest-benchmark
     - pytest-timeout
