@@ -1,6 +1,6 @@
 # Keep the version in sync with pydantic-feedstock because the latest version can be incompatible.
 {% set name = "pydantic-core" %}
-{% set version = "2.50.1" %}
+{% set version = "2.50.4" %}
 
 package:
   name: {{ name|lower }}
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name.replace('-', '_')}}-{{ version }}.tar.gz
-  sha256: e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09
+  sha256: aead3b74b68396bf0feab5d57e050b730ded7df55853c1e048a87e00aaf033c6
 
 build:
   number: 0
@@ -41,17 +41,19 @@ test:
   source_files:
     - tests
     - pyproject.toml
+  files:
+    - run_tests.py
+    - smoke_validation_info.py
   imports:
     - pydantic_core
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    # downgrade unknown thread_unsafe marks to warnings (see comment above).
-    # newer pytest (9.x) also flags class-scoped fixtures defined as instance methods; downgrade that too.
-    # test_allow_partial.py::test_set_frozenset[set_schema] hits an inline-snapshot internal AssertionError
-    # unrelated to pydantic-core behavior; skip it.
-    # pytest-examples is not on defaults; test_tzinfo imports pydantic (circular).
-    - pytest -vv --ignore=tests/test_docstrings.py --ignore=tests/test_tzinfo.py --ignore=tests/validators/test_allow_partial.py -W default::pytest.PytestUnknownMarkWarning -W default::pytest.PytestRemovedIn10Warning
+    # the code path behind the deselected test, on public API terms, with a clean exit
+    - python smoke_validation_info.py
+    # test verdict from the pytest junit report; osx-arm64 py3.11 can die after the last test
+    # (pydantic/pydantic#14242) and a plain exit code check would not see a truncated run
+    - python run_tests.py
   requires:
     - pip
     - pytest
