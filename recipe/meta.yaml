@@ -38,52 +38,22 @@ requirements:
 #E   pytest.PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?
 # No pytest-run-parallel here, so downgrade that mark to a warning instead of skipping.
 test:
-  {% set pytest_common = "--ignore=tests/test_docstrings.py --ignore=tests/test_tzinfo.py --ignore=tests/validators/test_allow_partial.py --deselect tests/validators/test_with_default.py::test_default_validate_default_after_validator_field_name -W default::pytest.PytestUnknownMarkWarning -W default::pytest.PytestRemovedIn10Warning" %}
   source_files:
     - tests
     - pyproject.toml
+  files:
+    - run_tests.py
+    - smoke_validation_info.py
   imports:
     - pydantic_core
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    # downgrade unknown thread_unsafe marks to warnings (see comment above).
-    # newer pytest (9.x) also flags class-scoped fixtures defined as instance methods; downgrade that too.
-    # test_allow_partial.py::test_set_frozenset[set_schema] hits an inline-snapshot internal AssertionError
-    # unrelated to pydantic-core behavior; skip it.
-    # pytest-examples is not on defaults; test_tzinfo imports pydantic (circular).
-    # Smoke: the code path from the failing test, on normal user terms, with a clean exit.
-    # If the shutdown crash were reachable from user code, this command would fail.
-    - |-
-      {{ PYTHON }} -c 'import pydantic_core.core_schema as cs
-      from pydantic_core import SchemaValidator
-      seen = []
-      f = cs.with_info_after_validator_function(lambda v, i: (seen.append(i.field_name), v)[1], cs.str_schema())
-      s = cs.model_schema(cls=type("M", (), {}), schema=cs.model_fields_schema(fields={"a": cs.model_field(schema=cs.with_default_schema(schema=f, default="default"))}), config={"validate_default": True})
-      SchemaValidator(s).validate_python({})
-      assert seen == ["a"], seen'
-    # osx-arm64: the interpreter dies at the end of the run on py3.11 (pydantic/pydantic#14242).
-    # The verdict comes from pytest's junit report, not from the exit code, because the crash can
-    # come after every test reported. The guard still fails on a real test failure, on a short
-    # run, and when the report is missing - which is what a crash before session end produces.
-    - {{ PYTHON }} -m pytest --collect-only -q {{ pytest_common }} > collect.txt 2>&1
-    - {{ PYTHON }} -m pytest -vv {{ pytest_common }} --junitxml=junit.xml || echo "pytest exited $?" > pytest_exit.txt
-    - |-
-      {{ PYTHON }} -c 'import re, sys
-      import xml.etree.ElementTree as ET
-      expected = int(re.search(r"(\d+)(?:/\d+)? tests collected", open("collect.txt").read()).group(1))
-      try:
-          root = ET.parse("junit.xml").getroot()
-      except FileNotFoundError:
-          sys.exit("TEST FAIL: junit.xml missing, pytest did not reach session end")
-      ts = root if root.tag == "testsuite" else root.find("testsuite")
-      n, f, e = (int(ts.get(k)) for k in ("tests", "failures", "errors"))
-      print(f"junit: tests={n} failures={f} errors={e} expected={expected}")
-      try:
-          print(open("pytest_exit.txt").read().strip())
-      except FileNotFoundError:
-          print("pytest exited 0")
-      sys.exit(0 if f == 0 and e == 0 and n == expected else 1)'
+    # the code path behind the deselected test, on public API terms, with a clean exit
+    - python smoke_validation_info.py
+    # test verdict from the pytest junit report; osx-arm64 py3.11 can die after the last test
+    # (pydantic/pydantic#14242) and a plain exit code check would not see a truncated run
+    - python run_tests.py
   requires:
     - pip
     - pytest
