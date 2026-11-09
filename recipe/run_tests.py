@@ -1,8 +1,9 @@
 """Run the upstream test suite and judge the result from the report, not the exit code.
 
-osx-arm64 py3.11 can lose the interpreter after the last test reported (pydantic/pydantic#14242),
-so the pytest exit code is not a reliable verdict there. Accept the run only when the junit
-report is complete and clean.
+The osx-arm64 py3.11-3.13 interpreter can die during this run (pydantic/pydantic#14242), so a
+plain exit code check is not a reliable verdict. Keep the whole suite enabled and run Python
+with faulthandler, so a fatal signal prints the Python traceback instead of exiting silently.
+Accept the run only when the junit report is complete and clean.
 """
 
 import re
@@ -11,11 +12,13 @@ import sys
 import xml.etree.ElementTree as ET
 
 PYTEST = [
+    # faulthandler dumps the Python traceback on a fatal signal (asked upstream on
+    # pydantic/pydantic#14242); without it the osx-arm64 process dies with no report.
+    "-X", "faulthandler",
     "-m", "pytest",
     "--ignore=tests/test_docstrings.py",
     "--ignore=tests/test_tzinfo.py",
     "--ignore=tests/validators/test_allow_partial.py",
-    "--deselect", "tests/validators/test_with_default.py::test_default_validate_default_after_validator_field_name",
     "-W", "default::pytest.PytestUnknownMarkWarning",
     "-W", "default::pytest.PytestRemovedIn10Warning",
 ]
@@ -34,7 +37,10 @@ def main():
     result = run(*PYTEST, "-vv", "--junitxml=junit.xml")
     print(f"pytest exited {result.returncode}")
     if result.returncode != 0:
-        print(result.stdout[-4000:], result.stderr[-2000:])
+        print("--- pytest stdout (tail: last reported test) ---")
+        print(result.stdout[-4000:])
+        print("--- pytest stderr (tail: faulthandler traceback) ---")
+        print(result.stderr[-12000:])
 
     try:
         root = ET.parse("junit.xml").getroot()

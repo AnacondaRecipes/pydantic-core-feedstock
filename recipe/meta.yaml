@@ -43,16 +43,13 @@ test:
     - pyproject.toml
   files:
     - run_tests.py
-    - smoke_validation_info.py
   imports:
     - pydantic_core
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    # the code path behind the deselected test, on public API terms, with a clean exit
-    - python smoke_validation_info.py
-    # test verdict from the pytest junit report; osx-arm64 py3.11 can die after the last test
-    # (pydantic/pydantic#14242) and a plain exit code check would not see a truncated run
+    # Keep the upstream test suite complete. run_tests.py enables faulthandler so a fatal
+    # exit (pydantic/pydantic#14242) prints a traceback, then judges the junit report.
     - python run_tests.py
   requires:
     - pip
