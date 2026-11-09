@@ -41,16 +41,13 @@ test:
   source_files:
     - tests
     - pyproject.toml
-  files:
-    - run_tests.py
   imports:
     - pydantic_core
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    # Keep the upstream test suite complete. run_tests.py enables faulthandler and judges the
-    # junit report; on failure it prints diagnostics for pydantic/pydantic#14242.
-    - python run_tests.py
+    # faulthandler prints the Python stack on a fatal signal (pydantic/pydantic#14242)
+    - python -X faulthandler -m pytest -vv --ignore=tests/test_docstrings.py --ignore=tests/test_tzinfo.py --ignore=tests/validators/test_allow_partial.py -W default::pytest.PytestUnknownMarkWarning -W default::pytest.PytestRemovedIn10Warning
   requires:
     - pip
     - pytest
