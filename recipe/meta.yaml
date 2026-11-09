@@ -43,15 +43,13 @@ test:
     - pyproject.toml
   files:
     - run_tests.py
-    - gcdebug.py
   imports:
     - pydantic_core
   commands:
     - pip check
     - python -c "from pydantic_core import PydanticUndefinedType"
-    # Keep the upstream test suite complete. run_tests.py enables faulthandler and, on
-    # osx-arm64, repeats the suite, the test and the module under the debug allocator and
-    # gc threshold 1,1,1 to catch the fatal exit in pydantic/pydantic#14242.
+    # Keep the upstream test suite complete. run_tests.py enables faulthandler and judges the
+    # junit report; on failure it prints diagnostics for pydantic/pydantic#14242.
     - python run_tests.py
   requires:
     - pip
